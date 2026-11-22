@@ -60,6 +60,7 @@ export interface Session {
   why: string;
   xp: number;
   optional: boolean;
+  legs?: boolean; // Calisthenics-Einheit enthält den leichten Bein-/Rumpf-Abschluss
   status: SessionStatus;
   missReason?: MissReason;
   swapped?: boolean; // durch Erholung ersetzt (Energie rot)

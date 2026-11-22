@@ -23,12 +23,13 @@ Code: Vorlagen und Texte in `src/plan/templates.ts`, Stellschrauben in `src/plan
 | 1 | Tagschicht | Ruhetag, optional 10 min Mobility |
 | 2 | Nachtschicht ab 19 Uhr | **eine** kurze, lockere Einheit am Vormittag: lockerer Lauf **oder** Exzentrik-Beine (Aufbau) + optionaler 15-min-Skill-Block |
 | 3 | nach Nachtschicht | Erholung: Spaziergang + Mobility |
-| 4 | frei | vormittags Lauf/Höhenmeter, nachmittags Calisthenics (Doppeleinheit) |
+| 4 | frei | vormittags Lauf/Höhenmeter, nachmittags **Krafteinheit** (Calisthenics, in Wiedereinstieg/Grundlage mit leichtem Bein-Abschluss) |
 | 5 | frei | langer Lauf |
 
 - Ein neuer Zyklus beginnt mit jeder Tagschicht. Durch **Verschiebungen** wiederholte Tage werden zu zusätzlichen freien Tagen (Erholung) – der Plan rückt nach.
 - **Zusatzschicht**: Der Tag wird blockiert. Schlüsseleinheiten (langer Lauf, Höhenmeter) weichen auf einen anderen freien Tag des Zyklus aus und verdrängen dort weniger wichtige Einheiten. Was nicht passt, wird ehrlich als gestrichen angezeigt.
-- **Keine schweren Beineinheiten vor dem langen Lauf**: An Tag 4 gibt es nur leichte Beinkraft (Körpergewicht, RPE 6). Schwere Exzentrik liegt an Tag 2, danach folgt Tag 3 als Erholung.
+- **Höchstens 2 Einheiten pro Tag.** Kraft und Calisthenics laufen immer zusammen als eine „Krafteinheit“.
+- **Keine schweren Beineinheiten vor dem langen Lauf**: An Tag 4 gibt es nur einen leichten Bein-Abschluss (15 min Körpergewicht, RPE 6) innerhalb der Krafteinheit. Schwere Exzentrik liegt an Tag 2, danach folgt Tag 3 als Erholung.
 
 ## Phasen (= Welten)
 
@@ -55,7 +56,7 @@ Code: Vorlagen und Texte in `src/plan/templates.ts`, Stellschrauben in `src/plan
 
 ## Calisthenics
 
-- Hauptsession an Tag 4 nachmittags (55 min): Skill A (Muscle-up), Skill B (Front Lever), Grundkraft (Klimmzüge/Dips/Liegestütze mit ~65 % des Maxwerts, 1–2 Wdh. Reserve), Rumpf.
+- Krafteinheit an Tag 4 nachmittags (55 min, mit Bein-Abschluss 70 min): Skill A (Muscle-up), Skill B (Front Lever), Grundkraft (Klimmzüge/Dips/Liegestütze mit ~65 % des Maxwerts, 1–2 Wdh. Reserve), Rumpf.
 - Optionaler 15-min-Skill-Block an Tag 2 (frisch, keine Ermüdung, für die Nachtschicht).
 - Wiedereinstieg: 50 % Umfang, Technik vor Last. Im Peak und Taper nur 30-min-Erhalt.
 - **Maxtest** alle 4 Zyklen an Tag 4: Klimmzüge, Dips, Liegestütze, Tuck-Front-Lever-Hold. Die Werte steuern die Satzvorgaben.

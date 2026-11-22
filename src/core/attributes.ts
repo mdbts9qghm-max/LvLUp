@@ -47,7 +47,7 @@ export function attributePoints(i: AttrInput): Record<AttrId, number> {
     }
     hm += s.swapped ? 0 : elev;
     if (s.type === 'Kraft' || s.kind === 'cali-main' || s.kind === 'cali-maint') strength++;
-    if (s.type === 'Calisthenics') skill++;
+    if (s.type === 'Calisthenics' || s.kind === 'cali-main' || s.kind === 'cali-maint') skill++;
   }
   const m = i.latestMax ?? {};
   return {

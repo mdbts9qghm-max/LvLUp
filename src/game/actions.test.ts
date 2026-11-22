@@ -97,3 +97,16 @@ describe('Spielaktionen (Integration)', () => {
     expect(r?.xpGained).toBe(100);
   });
 });
+
+describe('Plan-Migration', () => {
+  it('erzeugt alte Pläne ab heute neu und lässt Erledigtes stehen', async () => {
+    const db = await setup();
+    const first = (await db.sessions.where('date').equals('2026-11-24').toArray())[0];
+    await A.completeSession(first.id!, {});
+    const { saveSettings } = await import('../db/db');
+    await saveSettings({ planVersion: 1 });
+    expect(await A.migratePlan('2026-11-25')).toBe(true);
+    expect((await db.sessions.get(first.id!))?.status).toBe('done');
+    expect(await A.migratePlan('2026-11-25')).toBe(false);
+  });
+});

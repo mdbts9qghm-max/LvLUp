@@ -13,7 +13,7 @@ function reps(max: number, factor: number, min = 2): number {
   return Math.max(min, Math.round(max * factor));
 }
 
-export function caliInstruction(session: Pick<Session, 'kind' | 'phase' | 'reentry'>, unlocked: Set<string>, m: Maxes): string {
+export function caliInstruction(session: Pick<Session, 'kind' | 'phase' | 'reentry' | 'legs'>, unlocked: Set<string>, m: Maxes): string {
   const mu = currentNode('mu', unlocked);
   const fl = currentNode('fl', unlocked);
   const muTxt = mu ? `${mu.name}: ${mu.train}` : 'Muscle-up-Pfad gemeistert – Erhalt: 3 × 2 Muscle-ups';
@@ -35,6 +35,9 @@ export function caliInstruction(session: Pick<Session, 'kind' | 'phase' | 'reent
         `Skill B (Front Lever) – ${flTxt}`,
         `Grundkraft: Klimmzüge ${sets} × ${reps(m.pullups, f)} · Dips ${sets} × ${reps(m.dips, f)} · Liegestütze 3 × ${reps(m.pushups, f, 5)} (2 min Pause, 1–2 Wdh. Reserve).`,
         'Rumpf: Hollow Body Hold 3 × 30 s · Hängendes Knieheben 2 × 10.',
+        session.legs
+          ? 'Abschluss Beine (leicht, 15 min, RPE 6): Kniebeugen 3 × 12 · Rückwärts-Ausfallschritte 2 × 10 je Bein · Step-downs 2 × 8 je Bein (3 s ablassen) · Wadenheben einbeinig 2 × 12 · Seitstütz 2 × 30 s je Seite.'
+          : '',
         reduced ? 'Wiedereinstieg: Technik vor Last, kein Satz bis zum Versagen.' : '',
       ]
         .filter(Boolean)

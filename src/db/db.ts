@@ -32,6 +32,7 @@ export interface Settings {
   sickHistory: { from: ISODate; to: ISODate }[];
   lastBackupAt?: string;
   backupSnoozedAt?: string;
+  planVersion?: number; // Version der Plan-Vorlagen, mit der der Plan zuletzt erzeugt wurde
   createdAt: string;
 }
 
