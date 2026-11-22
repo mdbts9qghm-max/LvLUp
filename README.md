@@ -15,13 +15,12 @@ Du brauchst nur deinen GitHub-Account, den du schon hast. Dauer: ca. 5 Minuten.
 1. Öffne im Browser **github.com/mdbts9qghm-max/LvLUp** und melde dich an.
 2. Oben auf **Settings** (Zahnrad) tippen → links **Pages**.
 3. Unter **Build and deployment → Source** die Option **GitHub Actions** wählen. Fertig, speichern ist nicht nötig.
-4. Damit die App online geht, muss der Code auf dem Branch `main` liegen:
-   - Oben auf **Pull requests → New pull request** tippen.
-   - *base:* `main` und *compare:* `claude/pensive-edison-8r2j5j` wählen → **Create pull request** → **Merge pull request** → **Confirm merge**.
-   - Falls es `main` noch nicht gibt, ist der Claude-Branch automatisch der Standard-Branch. Dann startet das Veröffentlichen schon nach Schritt 3: unter **Actions → Deploy auf GitHub Pages → Run workflow**.
+4. Optional, aber empfohlen: **Settings → General → Default branch** auf `main` umstellen (Pfeil-Symbol → `main` → Update).
 5. Unter **Actions** siehst du den Lauf „Deploy auf GitHub Pages“. Wenn er grün ist (ca. 2 Minuten), ist die App unter der Adresse oben erreichbar.
 
-> Wenn der Deploy-Schritt rot ist mit „Branch is not allowed to deploy“: Settings → Environments → **github-pages** → bei „Deployment branches“ den Branch hinzufügen oder einfach nach `main` mergen (Schritt 4).
+> Veröffentlicht wird nur, was auf `main` liegt. Neue Versionen kommen als Pull Request: öffnen → **Merge pull request** → **Confirm merge**. Danach ist das Update nach ca. 2 Minuten online.
+>
+> Wenn der Deploy-Schritt rot ist mit „Branch is not allowed to deploy“: Settings → Environments → **github-pages** → bei „Deployment branches“ `main` erlauben, oder Schritt 4 erledigen.
 
 ## 2. Auf dem iPhone installieren
 
@@ -66,7 +65,7 @@ Alle Daten liegen **nur auf deinem iPhone**. Es gibt keinen Server und keinen Ac
 
 ## 6. Updates
 
-Neue Versionen werden automatisch veröffentlicht, sobald Änderungen auf `main` landen. Beim nächsten Öffnen erscheint in der App „Neue Version verfügbar → Aktualisieren“. Deine Daten bleiben erhalten.
+Neue Versionen werden automatisch veröffentlicht, sobald ein Pull Request nach `main` gemergt ist. Beim nächsten Öffnen erscheint in der App „Neue Version verfügbar → Aktualisieren“. Deine Daten bleiben erhalten.
 
 ---
 
