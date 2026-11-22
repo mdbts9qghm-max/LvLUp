@@ -300,6 +300,25 @@ export function legsBasic(day: CycleDay, order: number): Draft {
   });
 }
 
+/** Beinkraft an Tag 2 in Zyklen mit 2 Krafteinheiten (Grundlage / Wiedereinstieg). */
+export function legsStrength(day: CycleDay, order: number, light: boolean): Draft {
+  return d({
+    day,
+    order,
+    kind: 'legs-basic',
+    type: 'Kraft',
+    title: 'Krafteinheit (Beine)',
+    durationMin: light ? 25 : 35,
+    instruction: light
+      ? 'Körpergewicht, RPE 5–6: Kniebeugen 3 × 12 · Rückwärts-Ausfallschritte 2 × 10 je Bein · Step-downs 2 × 8 je Bein (3 s ablassen) · Wadenheben einbeinig 2 × 12 · Glute Bridge 2 × 15 · Seitstütz 2 × 30 s je Seite.'
+      : 'Körpergewicht oder leichte Kurzhanteln, RPE 6–7: Goblet Squats 3 × 10 · Bulgarian Split Squats 3 × 8 je Bein (3 s runter) · Step-downs 3 × 8 je Bein (3 s ablassen) · Einbeiniges Kreuzheben 3 × 8 je Bein · Wadenheben einbeinig 3 × 12 · Seitstütz 2 × 40 s je Seite.',
+    why: 'Zweite Krafteinheit in diesem Zyklus: Starke Beine, Hüfte und Waden machen dich robust für die 2000 hm. Vormittags vor der Nachtschicht, danach ist Tag 3 Erholung – so bist du an Tag 4 und 5 wieder frisch.',
+    priority: 55,
+    needs: 'light',
+    relocatable: false,
+  });
+}
+
 export function legsEccentric(day: CycleDay, order: number, stage: number): Draft {
   const load = stage <= 1 ? 'mit Körpergewicht' : stage <= 3 ? 'mit leichten Kurzhanteln (2 × 6–10 kg)' : 'mit Kurzhanteln (2 × 10–16 kg)';
   return d({

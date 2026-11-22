@@ -146,6 +146,21 @@ describe('Einheiten pro Tag', () => {
     const day4 = out.sessions.filter((s) => s.date === '2026-11-26');
     expect(day4.map((s) => s.title)).toEqual(['Lauf/Geh-Wechsel · 30 min', 'Krafteinheit']);
     expect(day4[1].legs).toBe(true);
-    expect(out.sessions.some((s) => s.kind === 'legs-basic')).toBe(false);
+    expect(out.sessions.some((s) => s.kind === 'legs-basic' && s.cycleDay === 4)).toBe(false);
+  });
+});
+
+describe('Lauf/Kraft-Wechsel', () => {
+  it('gerade Zyklen 3× Laufen + 1× Kraft, ungerade (ab 3) 2× Laufen + 2× Kraft', () => {
+    const { out } = plan();
+    const isRun = (t: string) => t === 'Lauf' || t === 'Höhenmeter';
+    for (const c of out.cycles) {
+      if (c.phase === 'taper' || c.cycleNo < 2) continue;
+      const ss = out.sessions.filter((s) => s.cycleNo === c.cycleNo && !s.optional);
+      const runs = ss.filter((s) => isRun(s.type)).length;
+      const kraft = ss.filter((s) => s.type === 'Kraft').length;
+      if (c.cycleNo % 2 === 0) expect([runs, kraft]).toEqual([3, 1]);
+      else expect([runs, kraft]).toEqual([2, 2]);
+    }
   });
 });

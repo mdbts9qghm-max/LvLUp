@@ -66,7 +66,7 @@ function Main() {
 
   useEffect(() => {
     migratePlan(getToday())
-      .then((changed) => changed && ui.toast('Plan aktualisiert: vor der Nachtschicht nur 1 Einheit'))
+      .then((changed) => changed && ui.toast('Plan aktualisiert: neuer Lauf/Kraft-Wechsel'))
       .catch(() => undefined);
   }, [ui]);
 

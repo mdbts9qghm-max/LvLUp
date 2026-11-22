@@ -219,42 +219,38 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
   const deload = mode === 'deload';
   const drafts: Draft[] = [T.restDay(1), T.recoveryDay(3)];
   const odd = cycleNo % 2 === 1;
+  // Wechsel: gerade Zyklen 3× Laufen + 1× Kraft, ungerade Zyklen (ab Zyklus 3) 2× Laufen + 2× Kraft
+  const twoStrength = odd && cycleNo >= 3;
   const isMaxtest = cycleNo % MAXTEST_EVERY === 0 && mode !== 'reentry' && phase !== 'taper';
 
   if (mode === 'reentry') {
     const st = plan.reentryStage ?? 0;
-    drafts.push(T.runWalk(2, 0, Math.max(3, longKm * 0.5), st));
+    drafts.push(twoStrength ? T.legsStrength(2, 0, true) : T.runWalk(2, 0, Math.max(3, longKm * 0.5), st));
     drafts.push(T.runWalk(4, 0, Math.max(4, longKm * 0.65), st));
-    drafts.push(T.caliMain(4, 1, true, true));
+    drafts.push(T.caliMain(4, 1, true, !twoStrength));
     drafts.push(st >= 2 ? T.longRun(5, { km: longKm, hm: longHm, phase, deload: false, backToBack: false, tripSuggestion: false }) : T.runWalk(5, 0, longKm, st, true));
     return drafts;
   }
 
   switch (phase) {
     case 'grundlage': {
-      drafts.push(T.easyRun(2, 0, clamp(longKm * 0.35, 4, 8), phase));
+      drafts.push(twoStrength ? T.legsStrength(2, 0, deload) : T.easyRun(2, 0, clamp(longKm * 0.35, 4, 8), phase));
       drafts.push(odd ? T.stridesRun(4, 0, clamp(longKm * 0.45, 5, 9)) : T.hillIntro(4, 0, clamp(longKm * 0.45, 5, 9)));
-      drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, deload, !deload));
+      drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, deload, !deload && !twoStrength));
       drafts.push(T.longRun(5, { km: longKm, hm: longHm, phase, deload, backToBack: false, tripSuggestion: false }));
       break;
     }
     case 'aufbau': {
-      if (odd || deload) {
-        drafts.push(T.easyRun(2, 0, clamp(longKm * 0.3, 5, 9), phase));
-        } else {
-        drafts.push(T.legsEccentric(2, 0, Math.floor(cycleNo / 4)));
-      }
+      if (!twoStrength) drafts.push(T.easyRun(2, 0, clamp(longKm * 0.3, 5, 9), phase));
+      else drafts.push(deload ? T.legsMaint(2, 0) : T.legsEccentric(2, 0, Math.floor(cycleNo / 4)));
       drafts.push(T.vertSession(4, vertM, odd ? 'intervals' : 'steady', phase, deload));
       drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, false));
       drafts.push(T.longRun(5, { km: longKm, hm: longHm, phase, deload, backToBack: !deload, tripSuggestion: false }));
       break;
     }
     case 'peak': {
-      if (odd) {
-        drafts.push(T.easyRun(2, 0, clamp(longKm * 0.25, 6, 9), phase));
-        } else {
-        drafts.push(T.legsMaint(2, 0));
-      }
+      if (!twoStrength) drafts.push(T.easyRun(2, 0, clamp(longKm * 0.25, 6, 9), phase));
+      else drafts.push(T.legsMaint(2, 0));
       drafts.push(T.vertSession(4, vertM, 'steady', phase, false));
       drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMaint(4, 1));
       drafts.push(T.longRun(5, { km: longKm, hm: longHm, phase, deload: false, backToBack: true, tripSuggestion: false }));
