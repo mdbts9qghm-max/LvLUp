@@ -111,3 +111,19 @@ describe('Plan-Generator', () => {
     expect(out.dropped.length).toBeGreaterThan(0); // die Tag-4-Laufeinheit wurde verdrängt
   });
 });
+
+describe('Teilzyklen', () => {
+  it('verlegt keine Einheiten aus Tagen vor dem Planstart', () => {
+    const cal = buildCalendar('2026-11-26', RACE, '2026-11-24'); // Planstart = Tag 3
+    const out = generatePlan({ calendar: cal, fromDate: '2026-11-26', raceDate: RACE, aufbauStart: defaultAufbauStart(cal, RACE), startState: INITIAL_STATE(10) });
+    const c1 = out.sessions.filter((s) => s.cycleNo === 1);
+    expect(c1.filter((s) => s.kind === 'runwalk')).toHaveLength(1);
+    expect(out.dropped).toHaveLength(0);
+  });
+});
+
+describe('Normalfall', () => {
+  it('streicht ohne Zusatzschichten nichts', () => {
+    expect(plan().out.dropped).toHaveLength(0);
+  });
+});

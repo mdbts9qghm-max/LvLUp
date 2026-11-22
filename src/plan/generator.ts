@@ -195,7 +195,7 @@ export function generatePlan(input: GenerateInput): GenerateOutput {
     // ---------- Einheiten des Zyklus
     if (plan.mode !== 'race') {
       const drafts = buildDrafts(plan, cycle.cycleNo);
-      placeDrafts(drafts, cycle, fromDate, phase, plan.mode === 'reentry' && phase !== 'wiedereinstieg', sessions, dropped);
+      placeDrafts(drafts, cycle, fromDate, phase, plan.mode === 'reentry' && phase !== 'wiedereinstieg', sessions, dropped, ci === cycles.length - 1);
     }
     if (phase === 'taper') {
       // Rennwoche: die letzten 6 Tage folgen festen Regeln, unabhängig vom Zyklus
@@ -346,17 +346,21 @@ function placeDrafts(
   reentryFlag: boolean,
   out: Session[],
   dropped: DroppedSession[],
+  isLastCycle = false,
 ) {
   const placed = new Map<ISODate, Draft[]>();
   const usedNatural = new Set<ISODate>();
+  const relocated = new Set<Draft>();
   const sorted = [...drafts].sort((a, b) => b.priority - a.priority);
   const firstOfType = (cd: number) => cycle.days.find((x) => x.cycleDay === cd);
 
   for (const dr of sorted) {
     const natural = firstOfType(dr.day);
     if (natural && natural.date < fromDate) continue; // Vergangenheit
+    // Teilzyklus am Planstart (beginnt nach diesem Tag) oder am Renntag (endet davor): einfach entfallen lassen
+    if (!natural && (cycle.days[0].cycleDay > dr.day || isLastCycle)) continue;
     const isLoad = (e: Draft) => e.type === 'Lauf' || e.type === 'Höhenmeter' || e.type === 'Kraft';
-    const occupied = natural && isLoad(dr) && (placed.get(natural.date) ?? []).some((e) => isLoad(e) && e.priority > dr.priority);
+    const occupied = natural && isLoad(dr) && (placed.get(natural.date) ?? []).some((e) => relocated.has(e) && isLoad(e) && e.priority > dr.priority);
     if (natural && !natural.blocked && !occupied) {
       push(placed, natural.date, dr);
       usedNatural.add(natural.date);
@@ -398,7 +402,9 @@ function placeDrafts(
         // Erholungsplatzhalter weicht
       } else keep.push(e);
     }
-    keep.push({ ...dr, order: dr.type === 'Calisthenics' ? 1 : 0 });
+    const moved = { ...dr, order: dr.type === 'Calisthenics' ? 1 : 0 };
+    relocated.add(moved);
+    keep.push(moved);
     placed.set(target.date, keep);
   }
 
