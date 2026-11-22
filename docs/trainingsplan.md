@@ -28,7 +28,8 @@ Code: Vorlagen und Texte in `src/plan/templates.ts`, Stellschrauben in `src/plan
 
 - Ein neuer Zyklus beginnt mit jeder Tagschicht. Durch **Verschiebungen** wiederholte Tage werden zu zusätzlichen freien Tagen (Erholung) – der Plan rückt nach.
 - **Zusatzschicht**: Der Tag wird blockiert. Schlüsseleinheiten (langer Lauf, Höhenmeter) weichen auf einen anderen freien Tag des Zyklus aus und verdrängen dort weniger wichtige Einheiten. Was nicht passt, wird ehrlich als gestrichen angezeigt.
-- **Höchstens 2 Einheiten pro Tag, vor der Nachtschicht (Tag 2) nur 1.** Kraft und Calisthenics laufen immer zusammen als eine „Krafteinheit“.
+- **Höchstens 2 Einheiten pro Tag, vor der Nachtschicht (Tag 2) nur 1.**
+- **Wechsel Lauf/Kraft:** Gerade Zyklen (2, 4, 6 …) haben 3× Laufen + 1× Kraft. Ungerade Zyklen ab Zyklus 3 haben 2× Laufen + 2× Kraft – dann ist Tag 2 eine Krafteinheit für die Beine (Grundlage: Beinkraft, Aufbau: Exzentrik, Peak: Exzentrik-Erhalt), und die Krafteinheit an Tag 4 kommt ohne Bein-Abschluss aus. Im Taper wird nur gelaufen. Kraft und Calisthenics laufen immer zusammen als eine „Krafteinheit“.
 - **Keine schweren Beineinheiten vor dem langen Lauf**: An Tag 4 gibt es nur einen leichten Bein-Abschluss (15 min Körpergewicht, RPE 6) innerhalb der Krafteinheit. Schwere Exzentrik liegt an Tag 2, danach folgt Tag 3 als Erholung.
 
 ## Phasen (= Welten)
@@ -37,7 +38,7 @@ Code: Vorlagen und Texte in `src/plan/templates.ts`, Stellschrauben in `src/plan
 |---|---|---|---|
 | 1 Flachland | Wiedereinstieg | 2 Zyklen | Lauf/Geh-Wechsel (3/2 → 5/1 min), langer Lauf 60 % → 80 % der Startkapazität (6 → 8 km), Calisthenics-Technik |
 | 2 Hügelland | Grundlage | bis ca. Mitte Januar (~41 % der mittleren Zyklen) | langer Lauf ~11 → ~20 km, Steigerungen, Hügel-Einstieg 6–8 % |
-| 3 Hochwald | Höhe & Aufbau | bis ca. Mitte März | Höhenmeter-Session (300 → 900 hm), abwechselnd Bergintervalle und lange Steigung, langer Lauf mit 200 → ~1000 hm, Back-to-back Tag 4 + 5, Exzentrik an Tag 2 in geraden Zyklen |
+| 3 Hochwald | Höhe & Aufbau | bis ca. Mitte März | Höhenmeter-Session (300 → 900 hm), abwechselnd Bergintervalle und lange Steigung, langer Lauf mit 200 → ~1000 hm, Back-to-back Tag 4 + 5, Exzentrik an Tag 2 in ungeraden Zyklen |
 | 4 Gratpfad | Peak | 3 Zyklen vor dem Taper | längster Lauf ~35 km bzw. max. 5 h mit ~1000+ hm, Rennausrüstung und Verpflegung testen, Ausflug in den Bayerischen Wald empfohlen. Calisthenics nur noch Erhalt |
 | 5 Ruhelager | Taper | alle Zyklen, die in den letzten 11 Tagen beginnen (≈ 10 Tage) | Umfang 60 % → 45 %, kurze knackige Reize; die letzten 6 Tage folgen festen Rennwochen-Regeln |
 | Finale | Renntag | – | Final Boss: Soul Trail |
