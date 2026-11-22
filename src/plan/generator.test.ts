@@ -137,6 +137,8 @@ describe('Einheiten pro Tag', () => {
       const perDay = new Map<string, number>();
       for (const s of out.sessions) perDay.set(s.date, (perDay.get(s.date) ?? 0) + 1);
       expect(Math.max(...perDay.values())).toBeLessThanOrEqual(2);
+      const day2 = out.sessions.filter((s) => s.cycleDay === 2);
+      for (const d of new Set(day2.map((s) => s.date))) expect(day2.filter((s) => s.date === d)).toHaveLength(1);
     }
   });
   it('fasst Kraft und Calisthenics als "Krafteinheit" zusammen', () => {

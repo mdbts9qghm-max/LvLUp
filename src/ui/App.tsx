@@ -66,7 +66,7 @@ function Main() {
 
   useEffect(() => {
     migratePlan(getToday())
-      .then((changed) => changed && ui.toast('Plan aktualisiert: max. 2 Einheiten pro Tag'))
+      .then((changed) => changed && ui.toast('Plan aktualisiert: vor der Nachtschicht nur 1 Einheit'))
       .catch(() => undefined);
   }, [ui]);
 

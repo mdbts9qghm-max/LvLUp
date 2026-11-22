@@ -233,7 +233,6 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
   switch (phase) {
     case 'grundlage': {
       drafts.push(T.easyRun(2, 0, clamp(longKm * 0.35, 4, 8), phase));
-      drafts.push(T.caliSkill(2, 1));
       drafts.push(odd ? T.stridesRun(4, 0, clamp(longKm * 0.45, 5, 9)) : T.hillIntro(4, 0, clamp(longKm * 0.45, 5, 9)));
       drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, deload, !deload));
       drafts.push(T.longRun(5, { km: longKm, hm: longHm, phase, deload, backToBack: false, tripSuggestion: false }));
@@ -242,8 +241,7 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
     case 'aufbau': {
       if (odd || deload) {
         drafts.push(T.easyRun(2, 0, clamp(longKm * 0.3, 5, 9), phase));
-        drafts.push(T.caliSkill(2, 1));
-      } else {
+        } else {
         drafts.push(T.legsEccentric(2, 0, Math.floor(cycleNo / 4)));
       }
       drafts.push(T.vertSession(4, vertM, odd ? 'intervals' : 'steady', phase, deload));
@@ -254,8 +252,7 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
     case 'peak': {
       if (odd) {
         drafts.push(T.easyRun(2, 0, clamp(longKm * 0.25, 6, 9), phase));
-        drafts.push(T.caliSkill(2, 1));
-      } else {
+        } else {
         drafts.push(T.legsMaint(2, 0));
       }
       drafts.push(T.vertSession(4, vertM, 'steady', phase, false));
@@ -279,6 +276,8 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
 const RACE_WEEK_DAYS = 6;
 /** Höchstens so viele Einheiten an einem Tag. */
 export const MAX_PER_DAY = 2;
+/** Vor der Nachtschicht (Tag 2) nur eine Einheit. */
+export const MAX_BEFORE_NIGHT = 1;
 
 function raceWeekDraft(day: CalendarDay, toRace: number, capacityKm: number): Draft {
   if (toRace === 0) return T.raceDay(day.cycleDay);
@@ -417,10 +416,11 @@ function placeDrafts(
     } else if (list.length === 0) {
       list = [day.cycleDay === 1 ? T.restDay(1) : T.recoveryDay(day.cycleDay, usedNatural.has(day.date) || day.cycleDay !== 3)];
     }
-    if (list.length > MAX_PER_DAY) {
-      // Obergrenze: höchstens zwei Einheiten pro Tag – Pflicht vor optional, wichtig vor weniger wichtig
-      const keep = [...list].sort((a, b) => Number(a.optional) - Number(b.optional) || b.priority - a.priority).slice(0, MAX_PER_DAY);
-      for (const e of list) if (!keep.includes(e) && !e.optional) dropped.push({ date: day.date, title: e.title, reason: 'max. 2 Einheiten pro Tag' });
+    const max = day.cycleDay === 2 ? MAX_BEFORE_NIGHT : MAX_PER_DAY;
+    if (list.length > max) {
+      // Obergrenze: max. 2 Einheiten pro Tag, vor der Nachtschicht nur 1 – Pflicht vor optional, wichtig vor weniger wichtig
+      const keep = [...list].sort((a, b) => Number(a.optional) - Number(b.optional) || b.priority - a.priority).slice(0, max);
+      for (const e of list) if (!keep.includes(e) && !e.optional) dropped.push({ date: day.date, title: e.title, reason: max === 1 ? 'vor der Nachtschicht nur 1 Einheit' : 'max. 2 Einheiten pro Tag' });
       list = keep;
     }
     list.sort((a, b) => a.order - b.order).forEach((dr, i) => out.push(toSession({ ...dr, order: i }, day, phase, reentryFlag)));

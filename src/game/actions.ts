@@ -15,7 +15,7 @@ import { canUnlock } from '../plan/skills';
 import { totalXp } from './progress';
 
 /** Erhöhen, wenn sich die Plan-Vorlagen ändern: Bestehende Pläne werden dann ab heute neu erzeugt. */
-export const PLAN_VERSION = 2;
+export const PLAN_VERSION = 3;
 
 async function requireSettings(): Promise<Settings> {
   const s = await getSettings();
@@ -115,7 +115,7 @@ export async function completeOnboarding(i: OnboardingInput): Promise<void> {
 export async function migratePlan(today: ISODate): Promise<boolean> {
   const s = await getSettings();
   if (!s?.onboarded || (s.planVersion ?? 1) >= PLAN_VERSION) return false;
-  await regenerate(today, { title: 'Plan aktualisiert: Krafteinheiten zusammengefasst, max. 2 Einheiten pro Tag' });
+  await regenerate(today, { title: 'Plan aktualisiert: max. 2 Einheiten pro Tag, vor der Nachtschicht nur 1' });
   await saveSettings({ planVersion: PLAN_VERSION });
   return true;
 }
