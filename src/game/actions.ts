@@ -14,6 +14,9 @@ import { applyDetraining, deriveStartState, describeDiff, reentryForPause, type 
 import { canUnlock } from '../plan/skills';
 import { totalXp } from './progress';
 
+/** Erhöhen, wenn sich die Plan-Vorlagen ändern: Bestehende Pläne werden dann ab heute neu erzeugt. */
+export const PLAN_VERSION = 2;
+
 async function requireSettings(): Promise<Settings> {
   const s = await getSettings();
   if (!s) throw new Error('Keine Einstellungen – Onboarding fehlt.');
@@ -105,7 +108,16 @@ export async function completeOnboarding(i: OnboardingInput): Promise<void> {
     await db.maxtests.add({ date: i.today, ...i.maxes });
   });
   await regenerate(i.planStart, { title: 'Plan erstellt' });
-  await saveSettings({ onboarded: true });
+  await saveSettings({ onboarded: true, planVersion: PLAN_VERSION });
+}
+
+/** Bringt einen gespeicherten Plan auf die aktuelle Vorlagen-Version. Erledigtes bleibt unangetastet. */
+export async function migratePlan(today: ISODate): Promise<boolean> {
+  const s = await getSettings();
+  if (!s?.onboarded || (s.planVersion ?? 1) >= PLAN_VERSION) return false;
+  await regenerate(today, { title: 'Plan aktualisiert: Krafteinheiten zusammengefasst, max. 2 Einheiten pro Tag' });
+  await saveSettings({ planVersion: PLAN_VERSION });
+  return true;
 }
 
 // ---------------------------------------------------------------- Belohnungen

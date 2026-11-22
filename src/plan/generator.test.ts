@@ -108,7 +108,9 @@ describe('Plan-Generator', () => {
     expect(day5.every((s) => s.type === 'Ruhe')).toBe(true);
     const long = c.find((s) => s.kind === 'long');
     expect(long?.cycleDay).toBe(4);
-    expect(out.dropped.length).toBeGreaterThan(0); // die Tag-4-Laufeinheit wurde verdrängt
+    // die Tag-4-Laufeinheit weicht aus (oder wird ehrlich als gestrichen gemeldet), statt sich mit dem langen Lauf zu stapeln
+    const otherRun = c.find((s) => s.type === 'Lauf' && s.kind !== 'long');
+    expect(otherRun === undefined ? out.dropped.length > 0 : otherRun.cycleDay !== 4).toBe(true);
   });
 });
 
@@ -125,5 +127,23 @@ describe('Teilzyklen', () => {
 describe('Normalfall', () => {
   it('streicht ohne Zusatzschichten nichts', () => {
     expect(plan().out.dropped).toHaveLength(0);
+  });
+});
+
+describe('Einheiten pro Tag', () => {
+  it('plant nie mehr als 2 Einheiten an einem Tag', () => {
+    for (const anchor of ['2026-11-23', '2026-11-21']) {
+      const { out } = plan(anchor, ['2026-12-17', '2027-02-10']);
+      const perDay = new Map<string, number>();
+      for (const s of out.sessions) perDay.set(s.date, (perDay.get(s.date) ?? 0) + 1);
+      expect(Math.max(...perDay.values())).toBeLessThanOrEqual(2);
+    }
+  });
+  it('fasst Kraft und Calisthenics als "Krafteinheit" zusammen', () => {
+    const { out } = plan();
+    const day4 = out.sessions.filter((s) => s.date === '2026-11-26');
+    expect(day4.map((s) => s.title)).toEqual(['Lauf/Geh-Wechsel · 30 min', 'Krafteinheit']);
+    expect(day4[1].legs).toBe(true);
+    expect(out.sessions.some((s) => s.kind === 'legs-basic')).toBe(false);
   });
 });

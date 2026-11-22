@@ -225,8 +225,7 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
     const st = plan.reentryStage ?? 0;
     drafts.push(T.runWalk(2, 0, Math.max(3, longKm * 0.5), st));
     drafts.push(T.runWalk(4, 0, Math.max(4, longKm * 0.65), st));
-    drafts.push(T.caliMain(4, 1, true));
-    drafts.push(T.legsBasic(4, 2));
+    drafts.push(T.caliMain(4, 1, true, true));
     drafts.push(st >= 2 ? T.longRun(5, { km: longKm, hm: longHm, phase, deload: false, backToBack: false, tripSuggestion: false }) : T.runWalk(5, 0, longKm, st, true));
     return drafts;
   }
@@ -236,8 +235,7 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
       drafts.push(T.easyRun(2, 0, clamp(longKm * 0.35, 4, 8), phase));
       drafts.push(T.caliSkill(2, 1));
       drafts.push(odd ? T.stridesRun(4, 0, clamp(longKm * 0.45, 5, 9)) : T.hillIntro(4, 0, clamp(longKm * 0.45, 5, 9)));
-      drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, deload));
-      if (!deload) drafts.push(T.legsBasic(4, 2));
+      drafts.push(isMaxtest ? T.maxtest(4, 1) : T.caliMain(4, 1, deload, !deload));
       drafts.push(T.longRun(5, { km: longKm, hm: longHm, phase, deload, backToBack: false, tripSuggestion: false }));
       break;
     }
@@ -279,6 +277,8 @@ function buildDrafts(plan: CyclePlan, cycleNo: number): Draft[] {
 }
 
 const RACE_WEEK_DAYS = 6;
+/** Höchstens so viele Einheiten an einem Tag. */
+export const MAX_PER_DAY = 2;
 
 function raceWeekDraft(day: CalendarDay, toRace: number, capacityKm: number): Draft {
   if (toRace === 0) return T.raceDay(day.cycleDay);
@@ -327,6 +327,7 @@ function toSession(dr: Draft, day: CalendarDay, phase: PhaseId, reentry: boolean
     why: dr.why,
     xp: dr.xp,
     optional: dr.optional,
+    legs: dr.legs,
     status: 'open',
   };
 }
@@ -359,7 +360,7 @@ function placeDrafts(
     if (natural && natural.date < fromDate) continue; // Vergangenheit
     // Teilzyklus am Planstart (beginnt nach diesem Tag) oder am Renntag (endet davor): einfach entfallen lassen
     if (!natural && (cycle.days[0].cycleDay > dr.day || isLastCycle)) continue;
-    const isLoad = (e: Draft) => e.type === 'Lauf' || e.type === 'Höhenmeter' || e.type === 'Kraft';
+    const isLoad = (e: Draft) => e.type === 'Lauf' || e.type === 'Höhenmeter' || e.kind.startsWith('legs');
     const occupied = natural && isLoad(dr) && (placed.get(natural.date) ?? []).some((e) => relocated.has(e) && isLoad(e) && e.priority > dr.priority);
     if (natural && !natural.blocked && !occupied) {
       push(placed, natural.date, dr);
@@ -402,7 +403,7 @@ function placeDrafts(
         // Erholungsplatzhalter weicht
       } else keep.push(e);
     }
-    const moved = { ...dr, order: dr.type === 'Calisthenics' ? 1 : 0 };
+    const moved = { ...dr, order: dr.kind.startsWith('cali') || dr.kind === 'maxtest' ? 1 : 0 };
     relocated.add(moved);
     keep.push(moved);
     placed.set(target.date, keep);
@@ -415,6 +416,12 @@ function placeDrafts(
       list = [T.restDay(day.cycleDay, 'Zusatzschicht – Ruhetag')];
     } else if (list.length === 0) {
       list = [day.cycleDay === 1 ? T.restDay(1) : T.recoveryDay(day.cycleDay, usedNatural.has(day.date) || day.cycleDay !== 3)];
+    }
+    if (list.length > MAX_PER_DAY) {
+      // Obergrenze: höchstens zwei Einheiten pro Tag – Pflicht vor optional, wichtig vor weniger wichtig
+      const keep = [...list].sort((a, b) => Number(a.optional) - Number(b.optional) || b.priority - a.priority).slice(0, MAX_PER_DAY);
+      for (const e of list) if (!keep.includes(e) && !e.optional) dropped.push({ date: day.date, title: e.title, reason: 'max. 2 Einheiten pro Tag' });
+      list = keep;
     }
     list.sort((a, b) => a.order - b.order).forEach((dr, i) => out.push(toSession({ ...dr, order: i }, day, phase, reentryFlag)));
   }

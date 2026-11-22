@@ -25,6 +25,7 @@ export interface Draft {
   priority: number;
   needs: Needs;
   relocatable: boolean;
+  legs?: boolean;
 }
 
 export function roundHalf(n: number): number {
@@ -306,7 +307,7 @@ export function legsEccentric(day: CycleDay, order: number, stage: number): Draf
     order,
     kind: 'legs-eccentric',
     type: 'Kraft',
-    title: 'Exzentrik-Beine (Bergab-Training)',
+    title: 'Krafteinheit (Beine)',
     durationMin: 35,
     instruction: `${load}, langsames Absenken: Step-downs von 30–40 cm Box 3 × 8 je Bein (4 s runter) · Bulgarian Split Squats 3 × 8 je Bein (3 s runter) · Rückwärts-Ausfallschritte 3 × 10 je Bein · Einbeiniges Kreuzheben 3 × 8 je Bein · Exzentrisches Wadenheben 3 × 12 (auf zwei hoch, auf einem 3 s runter). RPE 7.`,
     why: 'Bergab wird der Oberschenkel unter Last verlängert – das zerstört im Ultra die meisten Beine. Exzentrisches Training macht sie dafür robust. Morgen ist Erholungstag, übermorgen bist du wieder frisch.',
@@ -322,7 +323,7 @@ export function legsMaint(day: CycleDay, order: number): Draft {
     order,
     kind: 'legs-maint',
     type: 'Kraft',
-    title: 'Exzentrik-Erhalt',
+    title: 'Krafteinheit (Beine, kurz)',
     durationMin: 20,
     instruction: 'Step-downs 2 × 8 je Bein (3 s runter) · Bulgarian Split Squats 2 × 8 je Bein · Einbeiniges Wadenheben 2 × 12. RPE 6, kein Muskelkater erzwingen.',
     why: 'Im Peak reicht ein kleiner Reiz, um die Bergab-Festigkeit zu erhalten. Die Energie gehört jetzt den langen Läufen.',
@@ -335,15 +336,16 @@ export function legsMaint(day: CycleDay, order: number): Draft {
 // ---------------------------------------------------------------- Calisthenics
 // Die genauen Übungen ergänzt die App zur Laufzeit aus deinem Skill-Stand (siehe calisthenics.ts).
 
-export function caliMain(day: CycleDay, order: number, reduced: boolean): Draft {
+export function caliMain(day: CycleDay, order: number, reduced: boolean, withLegs = false): Draft {
   return d({
     day,
     order,
     kind: 'cali-main',
-    type: 'Calisthenics',
-    title: reduced ? 'Calisthenics: Technik-Basis' : 'Calisthenics: Kraft & Skills',
-    durationMin: reduced ? 40 : 55,
-    instruction: 'Aufwärmen, Skill-Arbeit Muscle-up und Front Lever, Grundkraft Zug/Druck, Rumpf.',
+    type: 'Kraft',
+    title: 'Krafteinheit',
+    durationMin: (reduced ? 40 : 55) + (withLegs ? 15 : 0),
+    legs: withLegs || undefined,
+    instruction: 'Aufwärmen, Skill-Arbeit Muscle-up und Front Lever, Grundkraft Zug/Druck, Rumpf' + (withLegs ? ', leichter Bein-Abschluss.' : '.'),
     why: reduced
       ? 'Technik vor Last: saubere Bewegungsmuster jetzt sparen dir später Wochen. Moderater Umfang, weil der Körper noch im Wiedereinstieg ist.'
       : 'Nachmittags nach der Laufeinheit: Oberkörper-Kraft stört die Beine für den langen Lauf morgen nicht. Skills zuerst, solange du frisch bist.',
@@ -357,8 +359,8 @@ export function caliMaint(day: CycleDay, order: number): Draft {
     day,
     order,
     kind: 'cali-maint',
-    type: 'Calisthenics',
-    title: 'Calisthenics: Erhalt',
+    type: 'Kraft',
+    title: 'Krafteinheit (kurz)',
     durationMin: 30,
     instruction: 'Kurze Skill-Arbeit und 2 Sätze Grundkraft, weit weg vom Muskelversagen.',
     why: 'Der Trail hat jetzt Priorität. Mit einem kleinen, regelmäßigen Reiz hältst du Kraft und Skills, ohne Energie für die langen Läufe zu verlieren.',
@@ -389,7 +391,7 @@ export function maxtest(day: CycleDay, order: number): Draft {
     order,
     kind: 'maxtest',
     type: 'Kraft',
-    title: 'Maxtest: Kraft-Prüfung',
+    title: 'Krafteinheit: Maxtest',
     durationMin: 40,
     instruction:
       'Gut aufwärmen. Dann je ein Satz bis zur letzten sauberen Wiederholung, 3–5 min Pause: Klimmzüge (Kinn über die Stange, unten gestreckt) · Dips (Schulter unter Ellbogenhöhe) · Liegestütze (Brust fast am Boden, Körper gerade) · Tuck-Front-Lever-Hold (Sekunden, Rücken waagerecht). Optional: Körpergewicht morgens.',

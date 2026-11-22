@@ -15,7 +15,7 @@ import { TYPE_COLORS, useGame, useUi } from '../game';
 import { Field, Modal, NumInput } from './basics';
 
 export function sessionInstruction(s: Session, skills: Set<string>, maxes: Parameters<typeof caliInstruction>[2]): string {
-  if (s.type === 'Calisthenics') return caliInstruction(s, skills, maxes);
+  if (s.kind === 'cali-main' || s.kind === 'cali-maint' || s.kind === 'cali-skill') return caliInstruction(s, skills, maxes);
   return s.instruction;
 }
 

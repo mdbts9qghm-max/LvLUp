@@ -2,7 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { db } from '../db/db';
-import type { Reward } from '../game/actions';
+import { migratePlan, type Reward } from '../game/actions';
+import { today as getToday } from '../core/clock';
 import type { PlanDiff } from '../plan/reschedule';
 import { Icon, type IconName } from './art/icons';
 import { DiffModal, RewardOverlay, Toast } from './components/Overlays';
@@ -62,6 +63,12 @@ function Main() {
     }),
     [],
   );
+
+  useEffect(() => {
+    migratePlan(getToday())
+      .then((changed) => changed && ui.toast('Plan aktualisiert: max. 2 Einheiten pro Tag'))
+      .catch(() => undefined);
+  }, [ui]);
 
   const changeTab = useCallback((t: TabId) => {
     setTab(t);
